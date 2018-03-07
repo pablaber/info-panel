@@ -1,7 +1,5 @@
 var request = require('request');
 
-
-
 function getTimes() {
   return new Promise(function(resolve, reject) {
     fetchNYWData().then(function(result) {
