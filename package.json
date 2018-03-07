@@ -1,0 +1,23 @@
+{
+  "name": "info-panel",
+  "version": "1.0.0",
+  "description": "web application for an information panel displayed through a raspberry pi",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pablaber/info-panel.git"
+  },
+  "author": "Patrick Bacon-Blaber",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pablaber/info-panel/issues"
+  },
+  "homepage": "https://github.com/pablaber/info-panel#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "request": "^2.83.0"
+  }
+}
