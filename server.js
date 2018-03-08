@@ -2,8 +2,9 @@ var express = require('express');
 var app = express();
 
 // Modules
-var nyw = require('./services/nyw-bus')
+var nyw = require('./services/nyw-bus');
 var mta = require('./services/mta-subway');
+var darksky = require('./services/darksky.js');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -26,6 +27,12 @@ app.get('/mta-subway-times', function (req, res) {
     res.send(result);
   })
 });
+
+app.get('/darksky-weather', function(req, res) {
+  darksky.getWeather().then(function(result) {
+    res.send(result);
+  })
+})
 
 app.listen(8080, function() {
   console.log("Listening on port 8080...");
