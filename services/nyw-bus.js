@@ -77,6 +77,8 @@ function insideApproachingBox(dx, dy) {
 }
 
 function insideCloseBox(dx, dy) {
+  // TODO: this might have to have a small change since sometiems it thinks the
+  // bus is going past 34th street and giving a 4 minute ETA when it should be 0
   var validNS = (dx > (dy - 237) * (15/8)) &&
                 (dy < (8/15) * dx + 237) &&
                 (dx < (dy - 130) * (2)) &&
