@@ -24,15 +24,16 @@ app.get('/nyw-bus-times', function (req, res) {
 
 app.get('/mta-subway-times', function (req, res) {
   mta.getTimes().then(function(result) {
+    console.log("mta subway times request");
     res.send(result);
-  })
+  });
 });
 
 app.get('/darksky-weather', function(req, res) {
   darksky.getWeather().then(function(result) {
     res.send(result);
-  })
-})
+  });
+});
 
 app.listen(8080, function() {
   console.log("Listening on port 8080...");
