@@ -7,7 +7,8 @@ require('dotenv').config();
 var nyw = require('./services/nyw-bus');
 var mta = require('./services/mta-subway');
 var darksky = require('./services/darksky');
-var scores = require('./services/scores')
+var scores = require('./services/scores');
+var news = require('./services/news');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -43,6 +44,12 @@ app.get('/scores', function(req, res) {
     res.send(result);
   })
 });
+
+app.get('/news', function(req, res) {
+  news.getNews().then(function(result) {
+    res.send(result);
+  })
+})
 
 app.listen(8080, function() {
   console.log("Listening on port 8080...");
