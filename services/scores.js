@@ -1,7 +1,7 @@
 var request = require('request');
 var moment = require('moment');
 
-const MSF_BASE = "https://pablaber:aisling123@api.mysportsfeeds.com/v1.2/pull/";
+const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_BASE + "@api.mysportsfeeds.com/v1.2/pull/";
 const MAX_ENTRIES = 4;
 
 const TEAM_CONFIG = {

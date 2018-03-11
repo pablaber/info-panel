@@ -1,6 +1,6 @@
 var request = require('request');
 
-const KEY = '952592b0736d6861a3a0bc97d4f1bdc4';
+const KEY = process.env.DARKSKY_KEY;
 const LAT = 40.7469137;
 const LONG = -73.9794722;
 

@@ -100,7 +100,8 @@ function nywString(datetime) {
 function googleApi(lat, long) {
   var apiString = "https://maps.googleapis.com/maps/api/directions/json?origin="
   apiString += lat + "," + long;
-  apiString += "&destination=40.745811,-73.978303&waypoints=40.744494,-73.979058&key=AIzaSyCrPSZHWpq95nEts35ZozCr8et3WcdIcMk"
+  apiString += "&destination=40.745811,-73.978303&waypoints=40.744494,-73.979058&key="
+  apiString += process.env.GOOGLE_KEY
   return apiString;
 }
 

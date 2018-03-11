@@ -1,6 +1,8 @@
 var express = require('express');
 var app = express();
 
+require('dotenv').config();
+
 // Modules
 var nyw = require('./services/nyw-bus');
 var mta = require('./services/mta-subway');

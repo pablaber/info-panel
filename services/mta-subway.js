@@ -1,6 +1,6 @@
 var Mta = require('mta-gtfs');
 var mta = new Mta({
-  key: '6345f0e7460a9d832c9ea32d63331284',
+  key: process.env.MTA_KEY,
   feed_id: 1,
 });
 

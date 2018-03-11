@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pablaber/info-panel#readme",
   "dependencies": {
+    "dotenv": "^5.0.1",
     "express": "^4.16.2",
     "moment": "^2.21.0",
     "mta-gtfs": "^1.1.0",
