@@ -40,8 +40,8 @@ function getYesterdaysScores(date) {
         return !!value;
       });
       allResults.sort(function(a, b) {
-        var aTime = moment(a.game.date + " " + a.game.time, "YYYY-MM-DD h:mmA");
-        var bTime = moment(b.game.date + " " + b.game.time, "YYYY-MM-DD h:mmA");
+        var aTime = moment(a.date, "YYYY-MM-DD h:mmA");
+        var bTime = moment(b.date, "YYYY-MM-DD h:mmA");
         return aTime.diff(bTime);
       })
       resolve(allResults);
@@ -60,8 +60,8 @@ function getFutureGames(date) {
     Promise.all(leagues).then(function(values) {
       var allGames = [].concat.apply([], values);
       var result = allGames.sort(function(a, b) {
-        var aTime = moment(a.date + " " + a.time, "YYYY-MM-DD h:mmA");
-        var bTime = moment(b.date + " " + b.time, "YYYY-MM-DD h:mmA");
+        var aTime = moment(a.date, "YYYY-MM-DD h:mmA");
+        var bTime = moment(b.date, "YYYY-MM-DD h:mmA");
         return aTime.diff(bTime);
       }).slice(0, MAX_ENTRIES)
       resolve(result);
@@ -74,16 +74,26 @@ function yesterdaysScores(league, teams, date) {
   var url = "https://pablaber:aisling123@api.mysportsfeeds.com/v1.2/pull/"
   url += league;
   url += "/current/scoreboard.json?fordate="
-  url += date.subtract(1, "days").format("YYYYMMDD");
+  url += moment().subtract(1, "days").format("YYYYMMDD");
   url += "&team=";
-  url +=teams.join(',');
+  url += teams.join(',');
   return new Promise(function(resolve, reject) {
     request(url, function(error, response, body) {
-      if(Math.floor(response.statusCode / 100) === 4) {
+      if(Math.floor(response.statusCode / 100) === 4 || !JSON.parse(body).scoreboard.gameScore) {
         resolve([]);
       }
       else {
-        resolve(JSON.parse(body).scoreboard.gameScore)
+        var scores = JSON.parse(body).scoreboard.gameScore;
+        var leagueScores = scores.map(function(value) {
+          var simplified = {league: league}
+          simplified.awayTeam = value.game.awayTeam;
+          simplified.homeTeam = value.game.homeTeam;
+          simplified.awayScore = value.awayScore;
+          simplified.homeScore = value.homeScore;
+          simplified.date = value.game.date + " " + value.game.time;
+          return simplified;
+        })
+        resolve(leagueScores)
       }
     })
   })
@@ -104,6 +114,13 @@ function scheduleForTeams(league, teams, date) {
         var futureGames = gameSchedule.filter(function(value) {
           var datetime = value.date + " " + value.time;
           return moment(datetime, "YYYY-MM-DD h:mmA").isAfter(date);
+        }).map(function(value) {
+          var simplified = {league: league}
+          simplified.awayTeam = value.awayTeam;
+          simplified.homeTeam = value.homeTeam;
+          simplified.date = value.date + " " + value.time;
+          simplified.location = value.location;
+          return simplified;
         }).slice(0,MAX_ENTRIES)
         resolve(futureGames)
       }
