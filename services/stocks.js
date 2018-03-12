@@ -45,14 +45,19 @@ function getDailyInfo() {
     promises.push(new Promise(function(resolve, reject) {
       request(dailyUrl(symbol), function(error, response, body) {
         var json = JSON.parse(body);
-        var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function(a, b) {
-          return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
-        });
-        var compareDate = sortedKeys[1];
-        var obj = json["Time Series (Daily)"][compareDate];
-        obj.symbol = symbol;
-        obj.type = "daily";
-        resolve(obj);
+        if(!!json["Time Series (Daily)"]) {
+          var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function(a, b) {
+            return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
+          });
+          var compareDate = sortedKeys[1];
+          var obj = json["Time Series (Daily)"][compareDate];
+          obj.symbol = symbol;
+          obj.type = "daily";
+          resolve(obj);
+        }
+        else {
+          resolve({});
+        }
       });
     }));
   }
@@ -65,14 +70,19 @@ function getIntradayInfo() {
     promises.push(new Promise(function(resolve, reject) {
       request(intradayUrl(symbol), function(error, response, body) {
         var json = JSON.parse(body);
-        var sortedKeys = Object.keys(json["Time Series (1min)"]).sort(function(a, b) {
-          return moment(a, "YYYY-MM-DD HH:mm:ss").isBefore(moment(b, "YYYY-MM-DD HH:mm:ss")) ? 1 : -1;
-        });
-        var actualTime = sortedKeys[0];
-        var obj = json["Time Series (1min)"][actualTime];
-        obj.symbol = symbol;
-        obj.type = "intraday";
-        resolve(obj);
+        if(!!json["Time Series (1min)"]) {
+          var sortedKeys = Object.keys(json["Time Series (1min)"]).sort(function(a, b) {
+            return moment(a, "YYYY-MM-DD HH:mm:ss").isBefore(moment(b, "YYYY-MM-DD HH:mm:ss")) ? 1 : -1;
+          });
+          var actualTime = sortedKeys[0];
+          var obj = json["Time Series (1min)"][actualTime];
+          obj.symbol = symbol;
+          obj.type = "intraday";
+          resolve(obj);
+        }
+        else {
+          resolve({});
+        }
       })
     }))
   }
