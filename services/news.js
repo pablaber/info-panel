@@ -1,6 +1,6 @@
 var request = require('request');
 
-const MAX_ENTRIES = 4;
+const MAX_ENTRIES = 3;
 
 function getNews() {
   return new Promise(function(resolve, reject) {

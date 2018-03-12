@@ -2,7 +2,7 @@ var request = require('request');
 var moment = require('moment');
 
 const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_BASE + "@api.mysportsfeeds.com/v1.2/pull/";
-const MAX_ENTRIES = 4;
+const MAX_ENTRIES = 3;
 
 const TEAM_CONFIG = {
   "nhl": ["nyr"],

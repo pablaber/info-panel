@@ -28,7 +28,6 @@ app.get('/nyw-bus-times', function (req, res) {
 
 app.get('/mta-subway-times', function (req, res) {
   mta.getTimes().then(function(result) {
-    console.log("mta subway times request");
     res.send(result);
   });
 });
