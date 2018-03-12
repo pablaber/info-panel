@@ -9,6 +9,7 @@ var mta = require('./services/mta-subway');
 var darksky = require('./services/darksky');
 var scores = require('./services/scores');
 var news = require('./services/news');
+var stocks = require('./services/stocks');
 
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
@@ -46,6 +47,12 @@ app.get('/scores', function(req, res) {
 
 app.get('/news', function(req, res) {
   news.getNews().then(function(result) {
+    res.send(result);
+  })
+});
+
+app.get('/stocks', function(req, res) {
+  stocks.getStockInfo().then(function(result) {
     res.send(result);
   })
 })
