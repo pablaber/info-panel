@@ -1,7 +1,7 @@
 var request = require('request');
 var moment = require('moment');
 
-const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_BASE + "@api.mysportsfeeds.com/v1.2/pull/";
+const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_PASS + "@api.mysportsfeeds.com/v1.2/pull/";
 const MAX_ENTRIES = 3;
 
 const TEAM_CONFIG = {
@@ -24,6 +24,8 @@ function getScores() {
         "future": values[1]
       }
       resolve(results);
+    }, function(reason) {
+      reject(reason);
     })
 
   })
@@ -45,6 +47,8 @@ function getYesterdaysScores(date) {
         return aTime.diff(bTime);
       })
       resolve(allResults);
+    }, function(reason) {
+      reject(reason);
     });
   });
 
@@ -65,20 +69,25 @@ function getFutureGames(date) {
         return aTime.diff(bTime);
       }).slice(0, MAX_ENTRIES)
       resolve(result);
+    }, function(reason) {
+      reject(reason);
     })
   })
 
 }
 
 function yesterdaysScores(league, teams, date) {
-  var url = "https://pablaber:aisling123@api.mysportsfeeds.com/v1.2/pull/"
+  var url = MSF_BASE;
   url += league;
   url += "/current/scoreboard.json?fordate="
   url += moment().subtract(1, "days").format("YYYYMMDD");
   url += "&team=";
-  url += teams.join(',');
+  url += teams.join(','); 
   return new Promise(function(resolve, reject) {
     request(url, function(error, response, body) {
+      if(!!error) {
+        reject(error);
+      }
       if(!body || Math.floor(response.statusCode / 100) === 4 || !JSON.parse(body).scoreboard.gameScore) {
         resolve([]);
       }
@@ -95,12 +104,14 @@ function yesterdaysScores(league, teams, date) {
         })
         resolve(leagueScores)
       }
+    }, function(reason) {
+      reject(reason);
     })
   })
 }
 
 function scheduleForTeams(league, teams, date) {
-  var url = "https://pablaber:aisling123@api.mysportsfeeds.com/v1.2/pull/"
+  var url = MSF_BASE;
   url += league;
   url += "/current/full_game_schedule.json?team="
   url += teams.join(',');
@@ -124,6 +135,8 @@ function scheduleForTeams(league, teams, date) {
         }).slice(0,MAX_ENTRIES)
         resolve(futureGames)
       }
+    }, function(reason) {
+      reject(reason);
     })
   })
 }

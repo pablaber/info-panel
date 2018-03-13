@@ -8,6 +8,8 @@ function getWeather() {
   return new Promise(function(resolve, reject) {
     request(darkskyUrl(LAT, LONG, KEY), function(error, response, body) {
       resolve(body);
+    }, function(reason) {
+      reject(reason);
     });
   });
 

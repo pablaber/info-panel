@@ -35,6 +35,8 @@ function getStockInfo() {
         value.percentChange = ((value.currentPrice - value.prevClose) / value.prevClose).toFixed(4);
       })
       resolve(obj);
+    }, function(reason) {
+      reject(reason);
     })
   });
 }
@@ -58,6 +60,8 @@ function getDailyInfo() {
         else {
           resolve({});
         }
+      }, function(reason) {
+        reject(reason);
       });
     }));
   }
@@ -83,6 +87,8 @@ function getIntradayInfo() {
         else {
           resolve({});
         }
+      }, function(reason) {
+        reject(reason);
       })
     }))
   }

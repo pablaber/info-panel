@@ -6,6 +6,8 @@ function getNews() {
   return new Promise(function(resolve, reject) {
     request(newsUrl(), function(error, response, body) {
       resolve(JSON.parse(body).articles);
+    }, function(reason) {
+      reject(reason);
     })
   });
 }

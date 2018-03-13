@@ -8,6 +8,8 @@ function getTimes() {
       getAllTimes(result).then(function(timesResult) {
         resolve(timesResult);
       });
+    }, function(reason) {
+      reject(reason);
     });
   });
 };
@@ -33,6 +35,8 @@ function fetchNYWData() {
       });
 
       resolve(validBusses);
+    }, function(reason) {
+      reject(reason);
     });
   });
 };
@@ -46,6 +50,8 @@ function getAllTimes(data) {
 
     Promise.all(busEstimates).then(function(values) {
       resolve(values);
+    }, function(reason) {
+      reject(reason);
     })
   })
 }
@@ -58,6 +64,8 @@ function getBusEstimate(busLat, busLong) {
         return agg;
       }, 0);
       resolve(totalTime);
+    }, function(reason) {
+      reject(reason);
     })
   });
 }
