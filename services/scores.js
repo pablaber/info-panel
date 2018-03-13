@@ -79,7 +79,7 @@ function yesterdaysScores(league, teams, date) {
   url += teams.join(',');
   return new Promise(function(resolve, reject) {
     request(url, function(error, response, body) {
-      if(Math.floor(response.statusCode / 100) === 4 || !JSON.parse(body).scoreboard.gameScore) {
+      if(!body || Math.floor(response.statusCode / 100) === 4 || !JSON.parse(body).scoreboard.gameScore) {
         resolve([]);
       }
       else {
