@@ -1,4 +1,5 @@
 var request = require('request');
+var moment = require('moment');
 
 // Returns a promise that resolves to the integer value of time it will take for
 // the next bus to arrive (in seconds)
@@ -16,6 +17,9 @@ function getTimes() {
 
 function fetchNYWData() {
   return new Promise(function(resolve, reject) {
+    if(isOffPeak(moment())) {
+      reject("OFF_PEAK")
+    }
     request(nywString(new Date().getTime()), function(error, response, body) {
       var extendedBusInfo = JSON.parse(body).map(function(value) {
         return {
@@ -59,15 +63,37 @@ function getAllTimes(data) {
 function getBusEstimate(busLat, busLong) {
   return new Promise(function(resolve, reject) {
     request(googleApi(busLat, busLong), function(error, response, body) {
-      var totalTime = JSON.parse(body).routes[0].legs.reduce(function(agg, val, i) {
-        agg += val.duration.value;
-        return agg;
-      }, 0);
-      resolve(totalTime);
+      try {
+        var totalTime = JSON.parse(body).routes[0].legs.reduce(function(agg, val, i) {
+          agg += val.duration.value;
+          return agg;
+        }, 0);
+        resolve(totalTime);
+      }
+      catch(error) {
+        console.error(error);
+        reject(error);
+      }
+
     }, function(reason) {
       reject(reason);
     })
   });
+}
+
+function isOffPeak(time) {
+  var earlyPeakStart = moment("6:10am", "h:mma");
+  var earlyPeakEnd = moment("10:10am", "h:mma");
+  var latePeakStart = moment("3:30pm", "h:mma");
+  var latePeakEnd = moment("7:10pm", "h:mma");
+  if(time.day() === 0 || time.day() === 6) {
+    return true;
+  }
+  else if(time.isAfter(earlyPeakStart) && time.isBefore(earlyPeakEnd) ||
+          time.isAfter(latePeakStart) && time.isBefore(latePeakEnd)) {
+    return false;
+  }
+  return true;
 }
 
 function insideApproachingBox(dx, dy) {
