@@ -45,24 +45,30 @@ function getDailyInfo() {
   var promises = [];
   for(let symbol of STOCK_CONFIG) {
     promises.push(new Promise(function(resolve, reject) {
-      request(dailyUrl(symbol), function(error, response, body) {
-        var json = JSON.parse(body);
-        if(!!json["Time Series (Daily)"]) {
-          var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function(a, b) {
-            return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
-          });
-          var compareDate = sortedKeys[1];
-          var obj = json["Time Series (Daily)"][compareDate];
-          obj.symbol = symbol;
-          obj.type = "daily";
-          resolve(obj);
-        }
-        else {
-          resolve({});
-        }
-      }, function(reason) {
-        reject(reason);
-      });
+      try {
+        request(dailyUrl(symbol), function(error, response, body) {
+          var json = JSON.parse(body);
+          if(!!json["Time Series (Daily)"]) {
+            var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function(a, b) {
+              return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
+            });
+            var compareDate = sortedKeys[1];
+            var obj = json["Time Series (Daily)"][compareDate];
+            obj.symbol = symbol;
+            obj.type = "daily";
+            resolve(obj);
+          }
+          else {
+            resolve({});
+          }
+        }, function(reason) {
+          reject(reason);
+        });
+      }
+      catch(error) {
+        reject(error);
+      }
+
     }));
   }
   return promises;
