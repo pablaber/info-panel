@@ -117,7 +117,7 @@ function scheduleForTeams(league, teams, date) {
   url += teams.join(',');
   return new Promise(function(resolve, reject) {
     request(url, function(error, response, body) {
-      if(Math.floor(response.statusCode / 100) === 4) {
+      if(!response || Math.floor(response.statusCode / 100) === 4) {
         resolve([]);
       }
       else {
