@@ -29,6 +29,12 @@ function getCitibikeInfo() {
             isActive: station["is_renting"]
           }
         })
+        selectedStationsInfo.sort(function(a, b) {
+          let selectedIdsInOrder = selectedStations.map(function (value) {
+            return value.id
+          })
+          return selectedIdsInOrder.indexOf(parseInt(a.id)) - selectedIdsInOrder.indexOf(parseInt(b.id));
+        });
         resolve(selectedStationsInfo)
       }
     })
