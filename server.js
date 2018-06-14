@@ -10,6 +10,7 @@ var darksky = require('./services/darksky');
 var scores = require('./services/scores');
 var news = require('./services/news');
 var stocks = require('./services/stocks');
+var citibike = require('./services/citibike');
 var logger = require('./services/logger');
 
 const DEBUG = true;
@@ -111,6 +112,20 @@ app.get('/stocks', function(req, res) {
       error: reason
     }
     res.send(JSON.stringify(rejection));
+  })
+})
+
+app.get('/citibike', function(req, res) {
+  citibike.getCitibikeInfo().then(function(result) {
+    logger.info("Successful call to \"citibike\"");
+    res.send(result);
+  }, function(reason) {
+    logger.error("Call failed to \"citibike\". Info below:\n" + reason);
+    var rejection = {
+      failed: true,
+      error: reason
+    }
+    res.send(JSON.stringify(rejection))
   })
 })
 
