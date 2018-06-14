@@ -2,7 +2,7 @@ var request = require('request');
 var moment = require('moment');
 
 const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_PASS + "@api.mysportsfeeds.com/v1.2/pull/";
-const MAX_ENTRIES = 3;
+const MAX_ENTRIES = 5;
 
 const TEAM_CONFIG = {
   "nhl": ["nyr"],
@@ -16,12 +16,14 @@ function getScores() {
   return new Promise(function(resolve, reject) {
     var promises = [
       getYesterdaysScores(now),
-      getFutureGames(now)
+      getFutureGames(now),
+      getTodaysGames(now)
     ]
     Promise.all(promises).then(function(values) {
       var results = {
         "yesterday": values[0],
-        "future": values[1]
+        "future": values[1],
+        "today": values[2]
       }
       resolve(results);
     }, function(reason) {
@@ -55,6 +57,25 @@ function getYesterdaysScores(date) {
 
 }
 
+function getTodaysGames(date) {
+  return new Promise(function(resolve, reject) {
+    var leagues = Object.keys(TEAM_CONFIG).map(function (value) {
+      return scheduleForTeams(value, TEAM_CONFIG[value], date);
+    });
+
+    Promise.all(leagues).then(function(values) {
+      var allGames = [].concat.apply([], values);
+      var result = allGames.filter(function(game) {
+        var gameTime = moment(game.date, "YYYY-MM-DD h:mmA");
+        return gameTime.isSame(date, "day");
+      });
+      resolve(result);
+    }, function(reason) {
+      reject(reason);
+    })
+  })
+}
+
 function getFutureGames(date) {
   return new Promise(function(resolve, reject) {
     var leagues = Object.keys(TEAM_CONFIG).map(function(value) {
@@ -67,6 +88,9 @@ function getFutureGames(date) {
         var aTime = moment(a.date, "YYYY-MM-DD h:mmA");
         var bTime = moment(b.date, "YYYY-MM-DD h:mmA");
         return aTime.diff(bTime);
+      }).filter(function(game) {
+        var gameDate = moment(game.date, "YYYY-MM-DD h:mmA");
+        return gameDate.isAfter(date.endOf("day"))
       }).slice(0, MAX_ENTRIES)
       resolve(result);
     }, function(reason) {
@@ -124,7 +148,7 @@ function scheduleForTeams(league, teams, date) {
         var gameSchedule = JSON.parse(body).fullgameschedule.gameentry;
         var futureGames = gameSchedule.filter(function(value) {
           var datetime = value.date + " " + value.time;
-          return moment(datetime, "YYYY-MM-DD h:mmA").isAfter(date);
+          return moment(datetime, "YYYY-MM-DD h:mmA").isAfter(date.startOf("day"));
         }).map(function(value) {
           var simplified = {league: league}
           simplified.awayTeam = value.awayTeam;
