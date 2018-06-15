@@ -1,4 +1,5 @@
 var request = require('request');
+var constants = require('./constants');
 
 const MAX_ENTRIES = 3;
 
@@ -17,7 +18,7 @@ function newsUrl() {
   url += process.env.NEWS_KEY;
   url += "&pageSize=";
   url += MAX_ENTRIES;
-  return url;
+  return constants.addOptionsTo(url);
 }
 
 module.exports = {

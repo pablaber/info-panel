@@ -1,4 +1,5 @@
 var request = require('request');
+var constants = require('./constants');
 
 const stationStatusUrl = "https://gbfs.citibikenyc.com/gbfs/en/station_status.json";
 const selectedStations = [
@@ -11,7 +12,7 @@ const selectedStations = [
 
 function getCitibikeInfo() {
   return new Promise(function(resolve, reject) {
-    request(stationStatusUrl, function(error, response, body) {
+    request(constants.addOptionsTo(stationStatusUrl), function(error, response, body) {
       var jsonBody = JSON.parse(body)
       if(!!jsonBody) {
         var stations = jsonBody.data.stations;

@@ -1,4 +1,5 @@
 var request = require('request');
+var constants = require('./constants');
 
 const KEY = process.env.DARKSKY_KEY;
 const LAT = 40.7469137;
@@ -16,8 +17,9 @@ function getWeather() {
 }
 
 function darkskyUrl(lat, long, key) {
-  return "https://api.darksky.net/forecast/" +
+  var url =  "https://api.darksky.net/forecast/" +
     KEY + "/" + LAT + "," + LONG;
+  return constants.addOptionsTo(url);
 }
 
 module.exports = {

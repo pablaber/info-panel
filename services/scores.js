@@ -1,5 +1,6 @@
 var request = require('request');
 var moment = require('moment');
+var constants = require('./constants');
 
 const MSF_BASE = "https://" + process.env.MSF_USER + ":" + process.env.MSF_PASS + "@api.mysportsfeeds.com/v1.2/pull/";
 const MAX_ENTRIES = 5;
@@ -108,7 +109,7 @@ function yesterdaysScores(league, teams, date) {
   url += "&team=";
   url += teams.join(','); 
   return new Promise(function(resolve, reject) {
-    request(url, function(error, response, body) {
+    request(constants.addOptionsTo(url), function(error, response, body) {
       if(!!error) {
         reject(error);
       }
@@ -140,7 +141,7 @@ function scheduleForTeams(league, teams, date) {
   url += "/current/full_game_schedule.json?team="
   url += teams.join(',');
   return new Promise(function(resolve, reject) {
-    request(url, function(error, response, body) {
+    request(constants.addOptionsTo(url), function(error, response, body) {
       if(!response || Math.floor(response.statusCode / 100) === 4) {
         resolve([]);
       }

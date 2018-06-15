@@ -1,11 +1,12 @@
 var request = require('request');
 var moment = require('moment');
+var constants = require('./constants')
 
 const STOCK_CONFIG = [
-  "TWTR",
-  "AAPL",
   ".INX",
-  "^VIX",
+  "TWTR",
+  "GOOG",
+  "AAPL",
   "V"
 ]
 
@@ -48,20 +49,26 @@ function getDailyInfo() {
     promises.push(new Promise(function(resolve, reject) {
       try {
         request(dailyUrl(symbol), function(error, response, body) {
-          var json = JSON.parse(body);
-          if(!!json["Time Series (Daily)"]) {
-            var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function(a, b) {
-              return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
-            });
-            var compareDate = sortedKeys[1];
-            var obj = json["Time Series (Daily)"][compareDate];
-            obj.symbol = symbol;
-            obj.type = "daily";
-            resolve(obj);
+          try {
+            var json = JSON.parse(body);
+            if (!!json["Time Series (Daily)"]) {
+              var sortedKeys = Object.keys(json["Time Series (Daily)"]).sort(function (a, b) {
+                return moment(a, "YYYY-MM-DD").isBefore(moment(b, "YYYY-MM-DD")) ? 1 : -1;
+              });
+              var compareDate = sortedKeys[1];
+              var obj = json["Time Series (Daily)"][compareDate];
+              obj.symbol = symbol;
+              obj.type = "daily";
+              resolve(obj);
+            }
+            else {
+              resolve({});
+            }
           }
-          else {
-            resolve({});
+          catch (e) {
+            reject(e);
           }
+          
         }, function(reason) {
           reject(reason);
         });
@@ -107,7 +114,7 @@ function intradayUrl(symbol) {
   url += symbol;
   url += "&interval=1min&apikey=";
   url += process.env.STOCKS_KEY;
-  return url;
+  return constants.addOptionsTo(url);
 }
 
 function dailyUrl(symbol) {
@@ -115,7 +122,7 @@ function dailyUrl(symbol) {
   url += symbol;
   url += "&apikey=";
   url += process.env.STOCKS_KEY;
-  return url;
+  return constants.addOptionsTo(url);
 }
 
 module.exports = {
