@@ -2,9 +2,10 @@ var request = require('request');
 var moment = require('moment');
 
 const STOCK_CONFIG = [
+  "TWTR",
+  "AAPL",
   ".INX",
   "^VIX",
-  "AAPL",
   "V"
 ]
 
